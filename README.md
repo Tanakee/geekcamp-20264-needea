@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ニーディア (Needea)
 
-## Getting Started
+不平不満を資産に変え、開発の「種」を絶やさないエコシステム。
 
-First, run the development server:
+詳細な企画内容は [requirements.md](./requirements.md) を参照してください。
+
+## 技術スタック
+
+- **Frontend:** Next.js (App Router) + TypeScript + Tailwind CSS
+- **Backend/BaaS:** Supabase
+- **Deployment:** Vercel
+
+## セットアップ
 
 ```bash
+# リポジトリをクローン
+git clone https://github.com/Tanakee/geekcamp-20264-needea.git
+cd geekcamp-20264-needea
+
+# 依存パッケージをインストール
+npm install
+
+# 環境変数を設定（.env.exampleをコピーして編集）
+cp .env.example .env.local
+
+# 開発サーバーを起動
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+[http://localhost:3000](http://localhost:3000) をブラウザで開いて動作確認してください。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 開発コマンド
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run dev    # 開発サーバー起動
+npm run build  # プロダクションビルド
+npm run lint   # ESLintチェック
+```
 
-## Learn More
+## ブランチ運用
 
-To learn more about Next.js, take a look at the following resources:
+| ブランチ | 用途 |
+|----------|------|
+| `main` | 本番環境 |
+| `develop` | 開発統合ブランチ |
+| `feature/*` | 機能開発 |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+作業は `feature/xxx` ブランチを切って開発し、`develop` へPRを出してください。
