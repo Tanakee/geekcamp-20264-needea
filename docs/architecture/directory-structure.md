@@ -98,9 +98,11 @@ features/
 
 ```
 libs/
-└── microCMS/           # microCMS クライアント設定・拡張
-    └── utils/
-        └── client.ts   # microCMS クライアント初期化
+└── shadcn /           # shadcn
+    └── assets/
+        ├── lib/      # cn() などのユーティリティ関数
+        └── ui/       # shadcn が生成した UI コンポーネント群（button, select, tabs など）
+
 ```
 
 #### `/src/infra` - インフラストラクチャ層
@@ -109,7 +111,7 @@ libs/
 
 ```
 infra/
-├── microCMS/           # Contentful CMS 連携
+├── microCMS/             # Contentful CMS 連携
 │   ├── api/              # API エンドポイント定義
 │   ├── entities/         # エンティティ定義
 │   └── repositories/     # データアクセス関数（機能別整理）
