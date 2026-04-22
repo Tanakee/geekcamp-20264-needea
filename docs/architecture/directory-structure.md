@@ -117,12 +117,12 @@ infra/
 │   └── repositories/     # データアクセス関数（機能別整理）
 ```
 
-#### `/src/pages` - Next.js ページ
+#### `/src/app` - Next.js ページ
 
 Next.js のファイルベースルーティングに従ったページ定義です。
 
 ```
-pages/
+app/
 ├── blog/              # 記事ページ
 ├── api/                  # API ルート
 ├── _app.tsx              # アプリケーションルート
