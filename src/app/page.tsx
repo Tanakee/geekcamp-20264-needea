@@ -1,10 +1,8 @@
 import { supabase } from "@/lib/supabase";
 
 export default async function Home() {
-  const { error } = await supabase.from("_supabase_connection_test").select("*").limit(1);
-
-  // PGRST116 = table not found in schema cache (接続自体は成功)
-  const connected = !error || error.code === "PGRST116";
+  const { error } = await supabase.auth.getSession();
+  const connected = !error;
 
   return (
     <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
