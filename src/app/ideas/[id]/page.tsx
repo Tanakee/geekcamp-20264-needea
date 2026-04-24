@@ -311,14 +311,31 @@ export default function IdeaDetailPage() {
               <p className="text-xs text-muted-foreground mb-1">着手中のエンジニア</p>
               <p className="text-xl font-bold mb-3">{solvers}人</p>
               <Button
-                className="w-full"
+                className="w-full mb-2"
                 variant={solved ? 'secondary' : 'default'}
                 onClick={handleSolve}
                 disabled={solved}
               >
-                {solved ? '着手済み ✓' : 'Solve this!\n（解決に参加する）'}
+                {solved ? '着手済み ✓' : 'Solve this!'}
               </Button>
+              <Link href={`/messages/${idea.id}`} className="block">
+                <Button variant="outline" className="w-full" size="sm">
+                  💬 メッセージを送る
+                </Button>
+              </Link>
             </div>
+
+            {/* Feedback (解決済みのみ) */}
+            {idea.status === '解決済み' && (
+              <div className="border border-emerald-700 rounded-xl p-4 bg-emerald-950">
+                <p className="text-xs text-emerald-400 font-semibold mb-2">✓ 解決済み</p>
+                <Link href={`/ideas/${idea.id}/solution`} className="block">
+                  <Button className="w-full bg-emerald-700 hover:bg-emerald-600 text-white" size="sm">
+                    フィードバックを送る
+                  </Button>
+                </Link>
+              </div>
+            )}
 
             {/* Tech Stack */}
             <div className="border border-border rounded-xl p-4 bg-card">
