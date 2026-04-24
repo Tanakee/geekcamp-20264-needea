@@ -211,10 +211,10 @@ export default function SolutionPage() {
         <aside className="w-60 shrink-0">
           <div className="sticky top-20 space-y-4">
             {submitted ? (
-              <div className="border border-emerald-700 rounded-xl p-5 bg-emerald-950 text-center">
+              <div className="border border-emerald-200 rounded-xl p-5 bg-emerald-50 text-center">
                 <p className="text-2xl mb-2">🎉</p>
-                <p className="text-sm font-semibold text-emerald-300">フィードバックを送信しました！</p>
-                <p className="text-xs text-emerald-500 mt-1">ありがとうございます</p>
+                <p className="text-sm font-semibold text-emerald-700">フィードバックを送信しました！</p>
+                <p className="text-xs text-emerald-600 mt-1">ありがとうございます</p>
               </div>
             ) : (
               <>
@@ -226,7 +226,7 @@ export default function SolutionPage() {
                       onClick={() => setApproval('yes')}
                       className={`flex-1 py-2 rounded-lg text-sm font-medium border transition-all ${
                         approval === 'yes'
-                          ? 'border-emerald-500 bg-emerald-900 text-emerald-300'
+                          ? 'border-emerald-400 bg-emerald-50 text-emerald-700'
                           : 'border-border text-muted-foreground hover:border-emerald-500/50'
                       }`}
                     >
@@ -236,7 +236,7 @@ export default function SolutionPage() {
                       onClick={() => setApproval('no')}
                       className={`flex-1 py-2 rounded-lg text-sm font-medium border transition-all ${
                         approval === 'no'
-                          ? 'border-red-500 bg-red-900 text-red-300'
+                          ? 'border-red-400 bg-red-50 text-red-700'
                           : 'border-border text-muted-foreground hover:border-red-500/50'
                       }`}
                     >

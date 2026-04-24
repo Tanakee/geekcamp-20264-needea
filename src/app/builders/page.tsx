@@ -48,8 +48,9 @@ export default function BuildersPage() {
 
   return (
     <main className="flex-1 max-w-6xl mx-auto w-full px-6 py-8">
-      <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider">NEEDEA / Build-ers 検索</p>
-      <h1 className="text-2xl font-bold mb-6">Solution Masters</h1>
+      <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider">NEEDEA / Build-ers</p>
+      <h1 className="text-2xl font-bold mb-1">Solution Masters</h1>
+      <p className="text-sm text-muted-foreground mb-6">アイデアに共感し、自ら動いた解決者たち。</p>
 
       <div className="flex gap-6">
         {/* Left filter */}
@@ -71,7 +72,7 @@ export default function BuildersPage() {
                   </select>
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground mb-1">解決数</p>
+                  <p className="text-xs text-muted-foreground mb-1">制作数</p>
                   <select className="w-full h-7 rounded-lg border border-border bg-muted text-xs px-2 outline-none text-foreground">
                     <option>指定なし</option>
                     <option>10件以上</option>
@@ -107,13 +108,13 @@ export default function BuildersPage() {
                     <div>
                       <p className="text-sm font-semibold">@{b.name}</p>
                       {b.githubVerified && (
-                        <p className="text-xs text-emerald-400">✓ GitHub</p>
+                        <p className="text-xs text-emerald-600">✓ GitHub</p>
                       )}
                     </div>
                   </div>
                   <div className="space-y-1 text-xs text-muted-foreground mb-2">
-                    <p>解決した問題 <span className="text-foreground font-medium">{b.solvedCount}件</span></p>
-                    <p>平均 <span className="text-foreground font-medium">{b.avgDays}日</span></p>
+                    <p>形にしたアイデア <span className="text-foreground font-medium">{b.solvedCount}件</span></p>
+                    <p>平均制作期間 <span className="text-foreground font-medium">{b.avgDays}日</span></p>
                   </div>
                   <div className="flex flex-wrap gap-1">
                     {b.skills.map((s) => (
@@ -127,7 +128,7 @@ export default function BuildersPage() {
 
           {/* Recently solved */}
           <div>
-            <p className="text-xs font-semibold text-muted-foreground mb-3 uppercase tracking-wider">最近解決されたNeed（Recently Solved Needs）</p>
+            <p className="text-xs font-semibold text-muted-foreground mb-3 uppercase tracking-wider">最近形になったアイデア（Recently Built）</p>
             <div className="grid grid-cols-3 gap-3">
               {recentlySolved.map((s) => (
                 <Link key={s.id} href={`/ideas/${s.id}`} className="block">

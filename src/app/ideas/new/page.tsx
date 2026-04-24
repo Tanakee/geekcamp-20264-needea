@@ -8,16 +8,16 @@ import { Input } from '@/libs/shadcn/assets/ui/input'
 import { Textarea } from '@/libs/shadcn/assets/ui/textarea'
 
 function getUrgencyColor(val: number) {
-  if (val >= 8) return { cls: 'text-red-400 border-red-700 bg-red-950', bar: 'bg-red-500', label: '緊急・切実' }
-  if (val >= 4) return { cls: 'text-yellow-400 border-yellow-700 bg-yellow-950', bar: 'bg-yellow-500', label: '要注意' }
-  return { cls: 'text-blue-400 border-blue-700 bg-blue-950', bar: 'bg-blue-500', label: '穏やか' }
+  if (val >= 8) return { cls: 'text-red-600 border-red-200 bg-red-50', bar: 'bg-red-400', label: '緊急・切実' }
+  if (val >= 4) return { cls: 'text-yellow-700 border-yellow-200 bg-yellow-50', bar: 'bg-yellow-400', label: '要注意' }
+  return { cls: 'text-blue-600 border-blue-200 bg-blue-50', bar: 'bg-blue-400', label: '穏やか' }
 }
 
 const recentIdeas = [
-  'Excelの集計を自動化したい',
-  '会議の議事録を自動生成したい',
-  '電車の遅延をリアルタイムで通知してほしい',
   '冷蔵庫の中身からレシピを提案してほしい',
+  '子どもの予定を家族全員で共有したい',
+  '電車の遅延をリアルタイムで知りたい',
+  '読んだ本の内容を忘れないようにしたい',
 ]
 
 export default function NewIdeaPage() {
@@ -73,12 +73,13 @@ export default function NewIdeaPage() {
       <div className="mb-8 text-center">
         <p className="text-xs text-muted-foreground mb-2 uppercase tracking-widest">Post your Need</p>
         <h1 className="text-2xl font-bold">
-          日常の『あったらいいな』を世界へポストする
+          日常の「あったらいいな」を、ツイートするように投稿しよう
         </h1>
+        <p className="text-sm text-muted-foreground mt-2">技術知識は不要。あなたの目線からしか見えない不満が、誰かの作品になる。</p>
       </div>
 
       {submitted && (
-        <div className="mb-6 rounded-xl border border-emerald-700 bg-emerald-950 p-4 text-center text-sm text-emerald-300">
+        <div className="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-center text-sm text-emerald-700">
           ✈️ 世界へポストされました！
         </div>
       )}
@@ -92,7 +93,7 @@ export default function NewIdeaPage() {
               タイトルを磨こう！ <span className="text-destructive">*</span>
             </label>
             <Input
-              placeholder="例：Excelの集計を自動化したい"
+              placeholder="例：冷蔵庫の食材からレシピを提案してほしい"
               value={title}
               onChange={(e) => setTitle(e.target.value.slice(0, 50))}
               maxLength={50}
@@ -131,7 +132,7 @@ export default function NewIdeaPage() {
               日常の不満（Problem） <span className="text-destructive">*</span>
             </label>
             <Textarea
-              placeholder="「こんなのがあったらなあ」という理想と、現状の不満を書いてください。"
+              placeholder="「こんなのがあったらなあ」という気持ちを、そのまま書いてください。技術的な知識は不要です。"
               value={problem}
               onChange={(e) => setProblem(e.target.value)}
               className="min-h-24"
@@ -141,11 +142,11 @@ export default function NewIdeaPage() {
           {/* Solution */}
           <div>
             <label className="block text-sm font-medium mb-1.5">
-              解決策のProposal
-              <span className="text-muted-foreground font-normal text-xs ml-2">（もしくはSolution — 未定でも可）</span>
+              こんな風に作れるかも
+              <span className="text-muted-foreground font-normal text-xs ml-2">（未定・わからなくて全然OK）</span>
             </label>
             <Textarea
-              placeholder="理想の解決策のイメージがあれば書いてください。わからなくても大丈夫です。"
+              placeholder="「こんなアプリがあれば」というイメージがあれば書いてください。なくても投稿できます。"
               value={solution}
               onChange={(e) => setSolution(e.target.value)}
               className="min-h-20"
@@ -220,7 +221,7 @@ export default function NewIdeaPage() {
               {submitted ? '投稿中...' : 'ポストする'}
             </Button>
             <p className="text-xs text-muted-foreground text-center mt-2">
-              あなたのアイデアが何人の「欲しい！」を集めるか？
+              あなたの「あったらいいな」が、誰かを動かすかもしれない。
             </p>
           </div>
         </div>
@@ -242,9 +243,10 @@ export default function NewIdeaPage() {
             <div className="border border-border rounded-xl p-4 bg-card">
               <p className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">投稿のコツ</p>
               <ul className="space-y-1.5 text-xs text-muted-foreground">
+                <li>✅ 技術知識ゼロでOK</li>
                 <li>✅ 具体的なシーンを書く</li>
-                <li>✅ 「誰が」困っているか明記</li>
-                <li>✅ タグで技術スタックを示す</li>
+                <li>✅ 「誰が」困っているか書く</li>
+                <li>✅ 解決策は未定でも投稿できる</li>
               </ul>
             </div>
           </div>

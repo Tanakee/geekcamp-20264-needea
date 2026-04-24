@@ -9,7 +9,7 @@ import { Badge } from '@/libs/shadcn/assets/ui/badge'
 import { Input } from '@/libs/shadcn/assets/ui/input'
 import { Textarea } from '@/libs/shadcn/assets/ui/textarea'
 
-type Status = '募集中' | '開発中' | '解決済み'
+type Status = '募集中' | '開発中' | '作品あり'
 
 const mockIdeas: Record<string, {
   id: string
@@ -26,7 +26,7 @@ const mockIdeas: Record<string, {
   wants: number
   solvers: number
   status: Status
-  solutionUrl?: string
+  workUrl?: string
 }> = {
   '1': {
     id: '1',
@@ -101,8 +101,8 @@ const mockIdeas: Record<string, {
     tags: ['#通勤', '#交通'],
     wants: 312,
     solvers: 2,
-    status: '解決済み',
-    solutionUrl: 'https://github.com/example/train-delay-notifier',
+    status: '作品あり',
+    workUrl: 'https://github.com/example/train-delay-notifier',
   },
 }
 
@@ -112,9 +112,9 @@ const mockComments = [
 ]
 
 const statusStyle: Record<Status, string> = {
-  '募集中': 'bg-slate-700 text-slate-300',
-  '開発中': 'bg-blue-900 text-blue-300',
-  '解決済み': 'bg-emerald-900 text-emerald-300',
+  '募集中': 'bg-slate-100 text-slate-600',
+  '開発中': 'bg-blue-50 text-blue-600',
+  '作品あり': 'bg-emerald-50 text-emerald-600',
 }
 
 function getUrgencyColor(val: number) {
@@ -130,7 +130,7 @@ export default function IdeaDetailPage() {
   const [wants, setWants] = useState(idea.wants)
   const [solvers, setSolvers] = useState(idea.solvers)
   const [liked, setLiked] = useState(false)
-  const [solved, setSolved] = useState(idea.status === '解決済み')
+  const [solved, setSolved] = useState(idea.status === '作品あり')
   const [comments, setComments] = useState(mockComments)
   const [newComment, setNewComment] = useState('')
   const [tagInput, setTagInput] = useState('')
@@ -178,7 +178,7 @@ export default function IdeaDetailPage() {
         Marketplace へ戻る
       </Link>
 
-      <p className="text-xs text-muted-foreground mb-1">The Blueprint / アイデア詳細</p>
+      <p className="text-xs text-muted-foreground mb-1">NEEDEA / アイデア詳細</p>
 
       <div className="flex gap-6">
         {/* Left */}
@@ -223,20 +223,20 @@ export default function IdeaDetailPage() {
           {/* Solution */}
           <div>
             <h2 className="text-sm font-semibold mb-2 text-muted-foreground uppercase tracking-wider">
-              解決策のProposal（もしくはSolution）
+              こんな風に作れるかも
             </h2>
             <div className="border border-border rounded-xl p-4 bg-muted/20 text-sm leading-relaxed text-muted-foreground">
-              {idea.solution || '（未定 — 開発者のアイデアを募集中！）'}
+              {idea.solution || '（アイデア未定 — 作る人のインスピレーションにお任せ！）'}
             </div>
-            {idea.solutionUrl && (
+            {idea.workUrl && (
               <a
-                href={idea.solutionUrl}
+                href={idea.workUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-2 inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
               >
                 <GitBranch className="size-3.5" />
-                成果物リポジトリを見る
+                作品を見る
                 <ExternalLink className="size-3" />
               </a>
             )}
@@ -290,11 +290,11 @@ export default function IdeaDetailPage() {
         {/* Right: Build Panel */}
         <aside className="w-56 shrink-0">
           <div className="sticky top-20 space-y-4">
-            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Build Panel / 解決への設計図</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">このアイデアに共感したら</p>
 
             {/* Wants counter */}
             <div className="border border-border rounded-xl p-4 bg-card text-center">
-              <p className="text-xs text-muted-foreground mb-1">現在のスターター数</p>
+              <p className="text-xs text-muted-foreground mb-1">共感した人の数</p>
               <p className="text-4xl font-bold text-primary">🔥 {wants}</p>
               <p className="text-sm text-muted-foreground mb-3">Wants</p>
               <Button
@@ -302,13 +302,13 @@ export default function IdeaDetailPage() {
                 variant={liked ? 'default' : 'outline'}
                 onClick={handleLike}
               >
-                {liked ? '✓ Wantした' : '欲しい！'}
+                {liked ? '✓ 共感した！' : '欲しい！ 共感する'}
               </Button>
             </div>
 
             {/* Solve this! */}
             <div className="border border-border rounded-xl p-4 bg-card">
-              <p className="text-xs text-muted-foreground mb-1">着手中のエンジニア</p>
+              <p className="text-xs text-muted-foreground mb-1">このアイデアで作っている人</p>
               <p className="text-xl font-bold mb-3">{solvers}人</p>
               <Button
                 className="w-full mb-2"
@@ -316,7 +316,7 @@ export default function IdeaDetailPage() {
                 onClick={handleSolve}
                 disabled={solved}
               >
-                {solved ? '着手済み ✓' : 'Solve this!'}
+                {solved ? '制作中 ✓' : 'このアイデアで作る！'}
               </Button>
               <Link href={`/messages/${idea.id}`} className="block">
                 <Button variant="outline" className="w-full" size="sm">
@@ -326,12 +326,12 @@ export default function IdeaDetailPage() {
             </div>
 
             {/* Feedback (解決済みのみ) */}
-            {idea.status === '解決済み' && (
-              <div className="border border-emerald-700 rounded-xl p-4 bg-emerald-950">
-                <p className="text-xs text-emerald-400 font-semibold mb-2">✓ 解決済み</p>
+            {idea.status === '作品あり' && (
+              <div className="border border-emerald-200 rounded-xl p-4 bg-emerald-50">
+                <p className="text-xs text-emerald-700 font-semibold mb-2">✓ 作品あり</p>
                 <Link href={`/ideas/${idea.id}/solution`} className="block">
-                  <Button className="w-full bg-emerald-700 hover:bg-emerald-600 text-white" size="sm">
-                    フィードバックを送る
+                  <Button className="w-full bg-emerald-500 hover:bg-emerald-600 text-white" size="sm">
+                    作品を見てみる
                   </Button>
                 </Link>
               </div>
