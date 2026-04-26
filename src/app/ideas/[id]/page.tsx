@@ -329,7 +329,7 @@ export default function IdeaDetailPage() {
             {idea.status === '作品あり' && (
               <div className="border border-emerald-200 rounded-xl p-4 bg-emerald-50">
                 <p className="text-xs text-emerald-700 font-semibold mb-2">✓ 作品あり</p>
-                <Link href={`/ideas/${idea.id}/solution`} className="block">
+                <Link href={`/ideas/${idea.id}/solutions`} className="block">
                   <Button className="w-full bg-emerald-500 hover:bg-emerald-600 text-white" size="sm">
                     作品を見てみる
                   </Button>

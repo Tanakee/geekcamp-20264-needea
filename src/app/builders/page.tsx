@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
 import { Filter } from 'lucide-react'
 import { Button } from '@/libs/shadcn/assets/ui/button'
@@ -12,21 +11,17 @@ type Builder = {
   initials: string
   color: string
   solvedCount: number
-  avgDays: number
   skills: string[]
-  githubVerified: boolean
   matchPct?: number
-  recentSolve?: string
-  recentSolveId?: string
 }
 
 const mockBuilders: Builder[] = [
-  { id: '1', name: 'taro', initials: 'T', color: 'bg-violet-500', solvedCount: 31, avgDays: 4.2, skills: ['Python', 'AI'], githubVerified: true, matchPct: 85, recentSolve: 'Excel作業を自動化したい', recentSolveId: '1' },
-  { id: '2', name: 'Miyuki', initials: 'M', color: 'bg-blue-500', solvedCount: 24, avgDays: 2.8, skills: ['React', 'Next.js'], githubVerified: true, matchPct: 60, recentSolve: '会議の議事録を自動生成したい', recentSolveId: '3' },
-  { id: '3', name: 'Kobayashi', initials: 'K', color: 'bg-emerald-500', solvedCount: 18, avgDays: 6.1, skills: ['Node.js', 'API'], githubVerified: false, matchPct: 40 },
-  { id: '4', name: 'build_k', initials: 'B', color: 'bg-orange-500', solvedCount: 12, avgDays: 8.5, skills: ['Python', 'FastAPI'], githubVerified: true, matchPct: 20 },
-  { id: '5', name: 'dev_yuki', initials: 'Y', color: 'bg-pink-500', solvedCount: 9, avgDays: 3.3, skills: ['Vue', 'TypeScript'], githubVerified: false },
-  { id: '6', name: 'fast_m', initials: 'F', color: 'bg-yellow-500', solvedCount: 7, avgDays: 1.9, skills: ['Go', 'Rust'], githubVerified: true },
+  { id: '1', name: 'taro', initials: 'T', color: 'bg-violet-500', solvedCount: 31, skills: ['Python', 'AI'], matchPct: 85 },
+  { id: '2', name: 'Miyuki', initials: 'M', color: 'bg-blue-500', solvedCount: 24, skills: ['React', 'Next.js'], matchPct: 60 },
+  { id: '3', name: 'Kobayashi', initials: 'K', color: 'bg-emerald-500', solvedCount: 18, skills: ['Node.js', 'API'], matchPct: 40 },
+  { id: '4', name: 'build_k', initials: 'B', color: 'bg-orange-500', solvedCount: 12, skills: ['Python', 'FastAPI'], matchPct: 20 },
+  { id: '5', name: 'dev_yuki', initials: 'Y', color: 'bg-pink-500', solvedCount: 9, skills: ['Vue', 'TypeScript'] },
+  { id: '6', name: 'fast_m', initials: 'F', color: 'bg-yellow-500', solvedCount: 7, skills: ['Go', 'Rust'] },
 ]
 
 const recentlySolved = [
@@ -42,9 +37,7 @@ const matchBarColor = (pct: number) => {
 }
 
 export default function BuildersPage() {
-  const [githubOnly, setGithubOnly] = useState(false)
-  const filtered = githubOnly ? mockBuilders.filter((b) => b.githubVerified) : mockBuilders
-  const recommended = filtered.filter((b) => b.matchPct !== undefined).sort((a, b) => (b.matchPct ?? 0) - (a.matchPct ?? 0))
+  const recommended = mockBuilders.filter((b) => b.matchPct !== undefined).sort((a, b) => (b.matchPct ?? 0) - (a.matchPct ?? 0))
 
   return (
     <main className="flex-1 max-w-6xl mx-auto w-full px-6 py-8">
@@ -79,15 +72,6 @@ export default function BuildersPage() {
                     <option>20件以上</option>
                   </select>
                 </div>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={githubOnly}
-                    onChange={(e) => setGithubOnly(e.target.checked)}
-                    className="rounded"
-                  />
-                  <span className="text-xs text-muted-foreground">GitHub Verified</span>
-                </label>
               </div>
             </div>
           </div>
@@ -99,7 +83,7 @@ export default function BuildersPage() {
           <div>
             <p className="text-xs font-semibold text-muted-foreground mb-3 uppercase tracking-wider">注目度の高次解決（Featured Build-ers）</p>
             <div className="grid grid-cols-3 gap-3">
-              {filtered.slice(0, 3).map((b) => (
+              {mockBuilders.slice(0, 3).map((b) => (
                 <div key={b.id} className="border border-border rounded-xl p-4 bg-card">
                   <div className="flex items-center gap-3 mb-3">
                     <div className={`size-10 rounded-full flex items-center justify-center text-sm font-bold text-white ${b.color}`}>
@@ -107,14 +91,10 @@ export default function BuildersPage() {
                     </div>
                     <div>
                       <p className="text-sm font-semibold">@{b.name}</p>
-                      {b.githubVerified && (
-                        <p className="text-xs text-emerald-600">✓ GitHub</p>
-                      )}
                     </div>
                   </div>
                   <div className="space-y-1 text-xs text-muted-foreground mb-2">
                     <p>形にしたアイデア <span className="text-foreground font-medium">{b.solvedCount}件</span></p>
-                    <p>平均制作期間 <span className="text-foreground font-medium">{b.avgDays}日</span></p>
                   </div>
                   <div className="flex flex-wrap gap-1">
                     {b.skills.map((s) => (

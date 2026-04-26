@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Plus, X } from 'lucide-react'
+import { Plus, X, Globe, Lock } from 'lucide-react'
 import { Button } from '@/libs/shadcn/assets/ui/button'
 import { Input } from '@/libs/shadcn/assets/ui/input'
 import { Textarea } from '@/libs/shadcn/assets/ui/textarea'
@@ -27,9 +27,13 @@ export default function NewIdeaPage() {
   const [urgency, setUrgency] = useState(5)
   const [problem, setProblem] = useState('')
   const [solution, setSolution] = useState('')
-  const [details, setDetails] = useState(['', ''])
+  const [scene, setScene] = useState('')
+  const [currentSolution, setCurrentSolution] = useState('')
+  const [targetUser, setTargetUser] = useState('')
+  const [details, setDetails] = useState([''])
   const [tagInput, setTagInput] = useState('')
   const [tags, setTags] = useState<string[]>([])
+  const [isPublic, setIsPublic] = useState(true)
   const [submitted, setSubmitted] = useState(false)
 
   const isValid = title.trim().length > 0 && problem.trim().length > 0
@@ -75,7 +79,7 @@ export default function NewIdeaPage() {
         <h1 className="text-2xl font-bold">
           日常の「あったらいいな」を、ツイートするように投稿しよう
         </h1>
-        <p className="text-sm text-muted-foreground mt-2">技術知識は不要。あなたの目線からしか見えない不満が、誰かの作品になる。</p>
+        <p className="text-sm text-muted-foreground mt-2">技術知識は不要。あなたの目線からしか気づけないことが、誰かの作品になる。</p>
       </div>
 
       {submitted && (
@@ -129,7 +133,7 @@ export default function NewIdeaPage() {
           {/* Problem */}
           <div>
             <label className="block text-sm font-medium mb-1.5">
-              日常の不満（Problem） <span className="text-destructive">*</span>
+              どんな「あったらいいな」？ <span className="text-destructive">*</span>
             </label>
             <Textarea
               placeholder="「こんなのがあったらなあ」という気持ちを、そのまま書いてください。技術的な知識は不要です。"
@@ -153,39 +157,69 @@ export default function NewIdeaPage() {
             />
           </div>
 
-          {/* Details */}
-          <div>
-            <label className="block text-sm font-medium mb-1">具体的な内容</label>
-            <p className="text-xs text-muted-foreground mb-2">書けば書くほど解決される確率が上がります</p>
-            <div className="space-y-2">
-              {details.map((d, i) => (
-                <div key={i} className="flex gap-2 items-center">
-                  <span className="text-xs text-muted-foreground w-5 shrink-0">{i + 1}.</span>
-                  <Input
-                    placeholder={`具体例 ${i + 1}`}
-                    value={d}
-                    onChange={(e) => updateDetail(i, e.target.value)}
-                  />
-                  {details.length > 2 && (
-                    <button
-                      onClick={() => removeDetail(i)}
-                      className="text-muted-foreground hover:text-destructive transition-colors"
-                    >
-                      <X className="size-4" />
-                    </button>
-                  )}
-                </div>
-              ))}
+          {/* 言語化サポート：ガイド付き質問 */}
+          <div className="space-y-4 border border-border rounded-xl p-4 bg-muted/20">
+            <div>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                アイデアを言語化しよう
+                <span className="font-normal ml-2 normal-case">（答えられるものだけでOK）</span>
+              </p>
             </div>
-            {details.length < 10 && (
-              <button
-                onClick={addDetail}
-                className="mt-2 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <Plus className="size-3.5" />
-                項目を追加
-              </button>
-            )}
+            <div>
+              <label className="block text-xs font-medium mb-1.5">📍 いつ、どんな場面で？</label>
+              <Input
+                placeholder="例：毎朝通勤中に電車を待っているとき"
+                value={scene}
+                onChange={(e) => setScene(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium mb-1.5">🔄 今はどうやって対処してる？</label>
+              <Input
+                placeholder="例：駅の掲示板を見るか、あきらめて待っている"
+                value={currentSolution}
+                onChange={(e) => setCurrentSolution(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium mb-1.5">👥 自分以外にも困ってそうな人は？</label>
+              <Input
+                placeholder="例：毎日電車で通勤している人たち"
+                value={targetUser}
+                onChange={(e) => setTargetUser(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium mb-1.5">💬 その他・追加で伝えたいこと</label>
+              <div className="space-y-2">
+                {details.map((d, i) => (
+                  <div key={i} className="flex gap-2 items-center">
+                    <Input
+                      placeholder="自由に書いてください"
+                      value={d}
+                      onChange={(e) => updateDetail(i, e.target.value)}
+                    />
+                    {details.length > 1 && (
+                      <button
+                        onClick={() => removeDetail(i)}
+                        className="text-muted-foreground hover:text-destructive transition-colors"
+                      >
+                        <X className="size-4" />
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+              {details.length < 5 && (
+                <button
+                  onClick={addDetail}
+                  className="mt-2 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <Plus className="size-3.5" />
+                  追加する
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Tags */}
@@ -211,6 +245,42 @@ export default function NewIdeaPage() {
             />
           </div>
 
+          {/* 公開設定 */}
+          <div>
+            <label className="block text-sm font-medium mb-2">公開設定</label>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setIsPublic(true)}
+                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border text-sm font-medium transition-all ${
+                  isPublic
+                    ? 'border-primary bg-primary/10 text-primary'
+                    : 'border-border text-muted-foreground hover:border-primary/40'
+                }`}
+              >
+                <Globe className="size-4" />
+                公開
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsPublic(false)}
+                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border text-sm font-medium transition-all ${
+                  !isPublic
+                    ? 'border-slate-400 bg-slate-50 text-slate-600'
+                    : 'border-border text-muted-foreground hover:border-slate-300'
+                }`}
+              >
+                <Lock className="size-4" />
+                非公開（自分だけ）
+              </button>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1.5">
+              {isPublic
+                ? 'Timelineに表示され、みんなが共感できます。'
+                : 'プロフィールにのみ保存されます。あとから公開に変更できます。'}
+            </p>
+          </div>
+
           {/* Submit */}
           <div className="pt-2">
             <Button
@@ -218,7 +288,7 @@ export default function NewIdeaPage() {
               disabled={!isValid || submitted}
               onClick={handleSubmit}
             >
-              {submitted ? '投稿中...' : 'ポストする'}
+              {submitted ? '投稿中...' : (isPublic ? 'ポストする' : '非公開で保存する')}
             </Button>
             <p className="text-xs text-muted-foreground text-center mt-2">
               あなたの「あったらいいな」が、誰かを動かすかもしれない。

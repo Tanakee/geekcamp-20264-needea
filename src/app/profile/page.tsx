@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { GitBranch } from 'lucide-react'
+import { GitBranch, Lock, Globe } from 'lucide-react'
 import { Button } from '@/libs/shadcn/assets/ui/button'
 
 const mockProfile = {
@@ -19,9 +19,16 @@ const mockProfile = {
     thanksCoffee: 1,
   },
   postedIdeas: [
-    { id: '1', title: 'Excel作業を自動化したい', wants: 124, status: '開発中' as const },
-    { id: '3', title: '会議の議事録を自動生成したい', wants: 201, status: '作品あり' as const },
-    { id: '4', title: '子どもの予定を家族全員で共有したい', wants: 77, status: '募集中' as const },
+    { id: '1', title: 'Excel作業を自動化したい', wants: 124, status: '開発中' as const, isPublic: true },
+    { id: '3', title: '会議の議事録を自動生成したい', wants: 201, status: '作品あり' as const, isPublic: true },
+    { id: '4', title: '子どもの予定を家族全員で共有したい', wants: 77, status: '募集中' as const, isPublic: true },
+    { id: '7', title: 'スーパーの特売情報をまとめて通知してほしい', wants: 0, status: '募集中' as const, isPublic: false },
+    { id: '8', title: '読んだ本の感想を一言でまとめたい', wants: 0, status: '募集中' as const, isPublic: false },
+  ],
+  likedIdeas: [
+    { id: '5', title: '電車の遅延をリアルタイムで通知してほしい', wants: 312, status: '作品あり' as const, author: 'Ito' },
+    { id: '2', title: 'TODOアプリよりもものを作りたい', wants: 56, status: '募集中' as const, author: 'Sato' },
+    { id: '6', title: '読んだ本の内容を要約して保存したい', wants: 55, status: '募集中' as const, author: 'Nakamura' },
   ],
   solvedIdeas: [
     { id: '5', title: '電車の遅延をリアルタイムで通知してほしい', wants: 312, repoUrl: 'https://github.com/example/train-delay', solver: 'taro', solverColor: 'bg-violet-500', solverInit: 'T' },
@@ -45,14 +52,15 @@ const barHeights = [20, 35, 28, 45, 60, 42, 55, 70, 48, 65, 80, 55]
 export default function ProfilePage() {
   const p = mockProfile
   const [githubConnected, setGithubConnected] = useState(false)
+  const [activeTab, setActiveTab] = useState<'posted' | 'liked'>('posted')
 
   return (
     <main className="flex-1 max-w-5xl mx-auto w-full px-6 py-8">
-      <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider">NEEDEA / 実績プロフィール画面</p>
+      <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider">NEEDEA / プロフィール</p>
       <h2 className="text-lg font-bold mb-6">アチーブメント・ミュージアム</h2>
 
       {/* Header */}
-      <div className="flex items-center gap-5 mb-8 border border-border rounded-xl p-5 bg-card">
+      <div className="flex items-center gap-5 mb-6 border border-border rounded-xl p-5 bg-card">
         <div className={`size-16 rounded-full flex items-center justify-center text-xl font-bold text-white ${p.color}`}>
           {p.initials}
         </div>
@@ -94,7 +102,7 @@ export default function ProfilePage() {
           <div className="flex-1">
             <p className="text-sm font-semibold mb-1">Build-er として活動する</p>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              GitHubアカウントを連携すると、アイデアへの「解決宣言」や成果物リポジトリの掲載など、Build-er向け機能が解放されます。
+              GitHubアカウントを連携すると、アイデアへの制作宣言や成果物リポジトリの掲載など、Build-er向け機能が解放されます。
             </p>
           </div>
           <Button
@@ -116,15 +124,15 @@ export default function ProfilePage() {
           </div>
           <div className="flex-1">
             <p className="text-sm font-semibold text-emerald-700">GitHub連携済み · Build-er機能が解放されています</p>
-            <p className="text-xs text-emerald-600">解決宣言・リポジトリ掲載・Build-er統計が利用できます</p>
+            <p className="text-xs text-emerald-600">制作宣言・リポジトリ掲載・Build-er統計が利用できます</p>
           </div>
         </div>
       )}
 
-      <div className="grid grid-cols-3 gap-6">
-        {/* 発見のプロ Stats */}
+      <div className="grid grid-cols-3 gap-6 mb-6">
+        {/* 活動グラフ */}
         <div className="border border-border rounded-xl p-4 bg-card">
-          <p className="text-xs font-semibold text-muted-foreground mb-3 uppercase tracking-wider">発見のプロ & 解決統計</p>
+          <p className="text-xs font-semibold text-muted-foreground mb-3 uppercase tracking-wider">活動グラフ</p>
           <div className="flex items-end gap-1 h-20 mb-2">
             {barHeights.map((h, i) => (
               <div
@@ -147,10 +155,10 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* 解決の実績グラフ */}
-        <div className={`border rounded-xl p-4 bg-card relative ${!githubConnected ? 'opacity-50 pointer-events-none border-dashed border-border' : 'border-border'}`}>
+        {/* Build-er Stats */}
+        <div className={`border rounded-xl p-4 bg-card relative ${!githubConnected ? 'border-dashed border-border' : 'border-border'}`}>
           {!githubConnected && (
-            <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-background/60 z-10">
+            <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-background/70 z-10">
               <p className="text-xs font-medium text-muted-foreground">GitHub連携で解放</p>
             </div>
           )}
@@ -192,7 +200,7 @@ export default function ProfilePage() {
 
         {/* Badge Collection */}
         <div className="border border-border rounded-xl p-4 bg-card">
-          <p className="text-xs font-semibold text-muted-foreground mb-3 uppercase tracking-wider">称号コレクション（The Badge Collection）</p>
+          <p className="text-xs font-semibold text-muted-foreground mb-3 uppercase tracking-wider">称号コレクション</p>
           <div className="grid grid-cols-2 gap-2">
             {p.badges.map((badge) => (
               <div
@@ -209,22 +217,91 @@ export default function ProfilePage() {
               </div>
             ))}
           </div>
+        </div>
+      </div>
 
-          <div className="mt-4 border border-border rounded-xl p-3 bg-muted/20">
-            <p className="text-xs font-semibold mb-2">投稿したアイデア</p>
-            <div className="space-y-1.5">
+      {/* アイデアタブ */}
+      <div className="border border-border rounded-xl bg-card overflow-hidden">
+        <div className="flex border-b border-border">
+          <button
+            onClick={() => setActiveTab('posted')}
+            className={`flex-1 py-3 text-sm font-medium transition-colors ${
+              activeTab === 'posted'
+                ? 'text-foreground border-b-2 border-primary bg-background'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            投稿したアイデア
+            <span className="ml-2 text-xs bg-muted text-muted-foreground rounded-full px-1.5 py-0.5">
+              {p.postedIdeas.length}
+            </span>
+          </button>
+          <button
+            onClick={() => setActiveTab('liked')}
+            className={`flex-1 py-3 text-sm font-medium transition-colors ${
+              activeTab === 'liked'
+                ? 'text-foreground border-b-2 border-primary bg-background'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            いいねしたアイデア
+            <span className="ml-2 text-xs bg-muted text-muted-foreground rounded-full px-1.5 py-0.5">
+              {p.likedIdeas.length}
+            </span>
+          </button>
+        </div>
+
+        <div className="p-4">
+          {activeTab === 'posted' && (
+            <div className="grid grid-cols-2 gap-3">
               {p.postedIdeas.map((idea) => (
-                <Link key={idea.id} href={`/ideas/${idea.id}`} className="block">
-                  <div className="flex items-center justify-between gap-2 hover:opacity-80 transition-opacity">
-                    <p className="text-xs text-muted-foreground truncate leading-snug">{idea.title}</p>
-                    <span className={`text-xs px-1.5 py-0.5 rounded-full shrink-0 ${statusStyle[idea.status]}`}>
-                      {idea.status}
-                    </span>
+                <Link key={idea.id} href={idea.isPublic ? `/ideas/${idea.id}` : '#'} className="block">
+                  <div className={`border rounded-xl p-4 transition-all ${
+                    idea.isPublic
+                      ? 'border-border hover:border-primary/50 hover:shadow-sm'
+                      : 'border-dashed border-border bg-muted/20'
+                  }`}>
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <p className="text-sm font-medium leading-snug flex-1">{idea.title}</p>
+                      {idea.isPublic ? (
+                        <Globe className="size-3.5 text-muted-foreground shrink-0 mt-0.5" />
+                      ) : (
+                        <Lock className="size-3.5 text-muted-foreground shrink-0 mt-0.5" />
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold text-primary">🔥 {idea.wants} Wants</span>
+                      <span className={`text-xs px-1.5 py-0.5 rounded-full ${statusStyle[idea.status]}`}>
+                        {idea.status}
+                      </span>
+                      {!idea.isPublic && (
+                        <span className="text-xs text-muted-foreground">非公開</span>
+                      )}
+                    </div>
                   </div>
                 </Link>
               ))}
             </div>
-          </div>
+          )}
+
+          {activeTab === 'liked' && (
+            <div className="grid grid-cols-2 gap-3">
+              {p.likedIdeas.map((idea) => (
+                <Link key={idea.id} href={`/ideas/${idea.id}`} className="block">
+                  <div className="border border-border rounded-xl p-4 hover:border-primary/50 hover:shadow-sm transition-all">
+                    <p className="text-sm font-medium leading-snug mb-2">{idea.title}</p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold text-primary">🔥 {idea.wants} Wants</span>
+                      <span className={`text-xs px-1.5 py-0.5 rounded-full ${statusStyle[idea.status]}`}>
+                        {idea.status}
+                      </span>
+                      <span className="text-xs text-muted-foreground">@{idea.author}</span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </main>

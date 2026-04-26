@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "NEEDEA",
-  description: "あなたの不満は、誰かのコードになる",
+  description: "あなたの「あったらいいな」が、誰かのコードになる",
 };
 
 export default function RootLayout({
