@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { ChevronDown } from 'lucide-react'
 import { Button } from '@/libs/shadcn/assets/ui/button'
 import { Badge } from '@/libs/shadcn/assets/ui/badge'
 
@@ -158,19 +157,20 @@ export default function TopPage() {
           {/* Left: Timeline */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between mb-4">
-              <div>
+              <div className="border-l-2 border-primary pl-3">
                 <h2 className="text-base font-semibold flex items-center gap-2">
                   🔥 Timeline
                 </h2>
                 <p className="text-xs text-muted-foreground">みんなの「あったらいいな」</p>
               </div>
-              <button
-                className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                onClick={() => setSortBy((s) => (s === 'wants' ? 'new' : 'wants'))}
+              <select
+                className="text-sm text-muted-foreground bg-transparent border border-border rounded-lg px-2 py-1 outline-none cursor-pointer hover:border-primary/50 transition-colors"
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as 'wants' | 'new')}
               >
-                {sortBy === 'wants' ? 'Wants順' : '投稿順'}
-                <ChevronDown className="size-4" />
-              </button>
+                <option value="wants">Wants順</option>
+                <option value="new">投稿順</option>
+              </select>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
@@ -217,7 +217,7 @@ export default function TopPage() {
           <aside className="w-60 shrink-0">
             <div className="sticky top-20 space-y-4">
               <div className="border border-border rounded-xl p-4 bg-card">
-                <p className="text-xs font-semibold text-muted-foreground mb-3 uppercase tracking-wider">Featured Build-ers</p>
+                <p className="text-xs font-semibold text-primary/70 mb-3 uppercase tracking-wider border-l-2 border-primary/40 pl-2">Featured Build-ers</p>
                 <div className="space-y-2 mb-4">
                   {mockBuilders.map((b) => (
                     <div key={b.id} className="flex items-center gap-3">
@@ -239,7 +239,7 @@ export default function TopPage() {
               </div>
 
               <div className="border border-border rounded-xl p-4 bg-card">
-                <p className="text-xs font-semibold text-muted-foreground mb-3 uppercase tracking-wider">アイデアの広がり</p>
+                <p className="text-xs font-semibold text-primary/70 mb-3 uppercase tracking-wider border-l-2 border-primary/40 pl-2">アイデアの広がり</p>
                 <div className="space-y-2">
                   {[
                     { label: '作品あり', value: 24, max: 50, color: 'bg-emerald-500' },
@@ -263,7 +263,7 @@ export default function TopPage() {
               </div>
 
               <div className="border border-border rounded-xl p-4 bg-card">
-                <p className="text-xs font-semibold text-muted-foreground mb-3 uppercase tracking-wider">Top Builders</p>
+                <p className="text-xs font-semibold text-primary/70 mb-3 uppercase tracking-wider border-l-2 border-primary/40 pl-2">Top Builders</p>
                 <div className="flex gap-2">
                   {mockBuilders.slice(0, 5).map((b) => (
                     <div key={b.id} className={`size-9 rounded-full flex items-center justify-center text-xs font-bold text-white ${b.color}`} title={b.name}>

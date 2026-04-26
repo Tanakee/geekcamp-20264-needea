@@ -13,6 +13,19 @@ function getUrgencyColor(val: number) {
   return { cls: 'text-blue-600 border-blue-200 bg-blue-50', bar: 'bg-blue-400', label: '穏やか' }
 }
 
+const suggestedTags = [
+  { tag: '#仕事', count: 84 },
+  { tag: '#AI', count: 71 },
+  { tag: '#日常', count: 65 },
+  { tag: '#通勤', count: 48 },
+  { tag: '#学習', count: 43 },
+  { tag: '#家族', count: 38 },
+  { tag: '#健康', count: 31 },
+  { tag: '#買い物', count: 28 },
+  { tag: '#料理', count: 24 },
+  { tag: '#時短', count: 22 },
+]
+
 const recentIdeas = [
   '冷蔵庫の中身からレシピを提案してほしい',
   '子どもの予定を家族全員で共有したい',
@@ -51,13 +64,10 @@ export default function NewIdeaPage() {
     setDetails((prev) => prev.filter((_, idx) => idx !== i))
   }
 
-  function handleTagKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if ((e.key === 'Enter' || e.key === ' ') && tagInput.trim()) {
-      e.preventDefault()
-      const tag = tagInput.trim().startsWith('#') ? tagInput.trim() : `#${tagInput.trim()}`
-      if (!tags.includes(tag)) setTags((prev) => [...prev, tag])
-      setTagInput('')
-    }
+  function addTag(raw: string) {
+    const tag = raw.trim().startsWith('#') ? raw.trim() : `#${raw.trim()}`
+    if (!tags.includes(tag)) setTags((prev) => [...prev, tag])
+    setTagInput('')
   }
 
   function removeTag(tag: string) {
@@ -90,199 +100,265 @@ export default function NewIdeaPage() {
 
       <div className="flex gap-8">
         {/* Form */}
-        <div className="flex-1 space-y-6">
-          {/* Title */}
-          <div>
-            <label className="block text-sm font-medium mb-1.5">
-              タイトルを磨こう！ <span className="text-destructive">*</span>
-            </label>
-            <Input
-              placeholder="例：冷蔵庫の食材からレシピを提案してほしい"
-              value={title}
-              onChange={(e) => setTitle(e.target.value.slice(0, 50))}
-              maxLength={50}
-            />
-            <p className="text-xs text-muted-foreground mt-1 text-right">{title.length}/50</p>
+        <div className="flex-1">
+          {/* 必須セクション */}
+          <div className="space-y-6">
+            {/* Title */}
+            <div>
+              <label className="block text-sm font-medium mb-1.5">タイトル</label>
+              <Input
+                placeholder="例：冷蔵庫の食材からレシピを提案してほしい"
+                value={title}
+                onChange={(e) => setTitle(e.target.value.slice(0, 50))}
+                maxLength={50}
+              />
+              <p className="text-xs text-muted-foreground mt-1 text-right">{title.length}/50</p>
+            </div>
+
+            {/* Problem */}
+            <div>
+              <label className="block text-sm font-medium mb-1.5">どんな「あったらいいな」？</label>
+              <Textarea
+                placeholder="「こんなのがあったらなあ」という気持ちを、そのまま書いてください。技術的な知識は不要です。"
+                value={problem}
+                onChange={(e) => setProblem(e.target.value)}
+                className="min-h-24"
+              />
+            </div>
           </div>
 
-          {/* Urgency */}
-          <div>
-            <label className="block text-sm font-medium mb-1.5">困り度</label>
-            <div className="flex items-center gap-4">
-              <select
-                className={`h-8 rounded-lg border px-2.5 text-sm font-medium outline-none ${urgencyStyle.cls}`}
-                value={urgency}
-                onChange={(e) => setUrgency(Number(e.target.value))}
-              >
-                {Array.from({ length: 10 }, (_, i) => i + 1).map((v) => (
-                  <option key={v} value={v} className="bg-card text-foreground">{v}</option>
-                ))}
-              </select>
-              <span className={`text-sm font-medium ${urgencyStyle.cls.split(' ')[0]}`}>
-                {urgencyStyle.label}
+          {/* オプション区切り */}
+          <div className="relative my-8">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-dashed border-primary/30" />
+            </div>
+            <div className="relative flex justify-center">
+              <span className="bg-background px-4 text-xs text-primary/60 font-medium">
+                ここから下はオプションです — 書けそうなものだけ埋めてください
               </span>
-              <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
-                <div
-                  className={`h-full rounded-full transition-all ${urgencyStyle.bar}`}
-                  style={{ width: `${urgency * 10}%` }}
+            </div>
+          </div>
+
+          {/* オプションセクション */}
+          <div className="space-y-6">
+            {/* Urgency */}
+            <div>
+              <label className="block text-sm font-medium mb-1.5 text-muted-foreground">ニーズ度</label>
+              <div className="flex items-center gap-4">
+                <select
+                  className={`h-8 rounded-lg border px-2.5 text-sm font-medium outline-none ${urgencyStyle.cls}`}
+                  value={urgency}
+                  onChange={(e) => setUrgency(Number(e.target.value))}
+                >
+                  {Array.from({ length: 10 }, (_, i) => i + 1).map((v) => (
+                    <option key={v} value={v} className="bg-card text-foreground">{v}</option>
+                  ))}
+                </select>
+                <span className={`text-sm font-medium ${urgencyStyle.cls.split(' ')[0]}`}>
+                  {urgencyStyle.label}
+                </span>
+                <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all ${urgencyStyle.bar}`}
+                    style={{ width: `${urgency * 10}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Solution */}
+            <div>
+              <label className="block text-sm font-medium mb-1.5 text-muted-foreground">こんな風に作れるかも</label>
+              <Textarea
+                placeholder="「こんなアプリがあれば」というイメージがあれば書いてください。なくても投稿できます。"
+                value={solution}
+                onChange={(e) => setSolution(e.target.value)}
+                className="min-h-20"
+              />
+            </div>
+
+            {/* 言語化サポート：ガイド付き質問 */}
+            <div className="space-y-4 border border-border rounded-xl p-4 bg-muted/20">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                アイデアを言語化しよう
+              </p>
+              <div>
+                <label className="block text-xs font-medium mb-1.5 text-muted-foreground">📍 いつ、どんな場面で？</label>
+                <Input
+                  placeholder="例：毎朝通勤中に電車を待っているとき"
+                  value={scene}
+                  onChange={(e) => setScene(e.target.value)}
                 />
               </div>
-            </div>
-          </div>
-
-          {/* Problem */}
-          <div>
-            <label className="block text-sm font-medium mb-1.5">
-              どんな「あったらいいな」？ <span className="text-destructive">*</span>
-            </label>
-            <Textarea
-              placeholder="「こんなのがあったらなあ」という気持ちを、そのまま書いてください。技術的な知識は不要です。"
-              value={problem}
-              onChange={(e) => setProblem(e.target.value)}
-              className="min-h-24"
-            />
-          </div>
-
-          {/* Solution */}
-          <div>
-            <label className="block text-sm font-medium mb-1.5">
-              こんな風に作れるかも
-              <span className="text-muted-foreground font-normal text-xs ml-2">（未定・わからなくて全然OK）</span>
-            </label>
-            <Textarea
-              placeholder="「こんなアプリがあれば」というイメージがあれば書いてください。なくても投稿できます。"
-              value={solution}
-              onChange={(e) => setSolution(e.target.value)}
-              className="min-h-20"
-            />
-          </div>
-
-          {/* 言語化サポート：ガイド付き質問 */}
-          <div className="space-y-4 border border-border rounded-xl p-4 bg-muted/20">
-            <div>
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                アイデアを言語化しよう
-                <span className="font-normal ml-2 normal-case">（答えられるものだけでOK）</span>
-              </p>
-            </div>
-            <div>
-              <label className="block text-xs font-medium mb-1.5">📍 いつ、どんな場面で？</label>
-              <Input
-                placeholder="例：毎朝通勤中に電車を待っているとき"
-                value={scene}
-                onChange={(e) => setScene(e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium mb-1.5">🔄 今はどうやって対処してる？</label>
-              <Input
-                placeholder="例：駅の掲示板を見るか、あきらめて待っている"
-                value={currentSolution}
-                onChange={(e) => setCurrentSolution(e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium mb-1.5">👥 自分以外にも困ってそうな人は？</label>
-              <Input
-                placeholder="例：毎日電車で通勤している人たち"
-                value={targetUser}
-                onChange={(e) => setTargetUser(e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium mb-1.5">💬 その他・追加で伝えたいこと</label>
-              <div className="space-y-2">
-                {details.map((d, i) => (
-                  <div key={i} className="flex gap-2 items-center">
-                    <Input
-                      placeholder="自由に書いてください"
-                      value={d}
-                      onChange={(e) => updateDetail(i, e.target.value)}
-                    />
-                    {details.length > 1 && (
-                      <button
-                        onClick={() => removeDetail(i)}
-                        className="text-muted-foreground hover:text-destructive transition-colors"
-                      >
-                        <X className="size-4" />
-                      </button>
-                    )}
-                  </div>
-                ))}
+              <div>
+                <label className="block text-xs font-medium mb-1.5 text-muted-foreground">🔄 今はどうやって対処してる？</label>
+                <Input
+                  placeholder="例：駅の掲示板を見るか、あきらめて待っている"
+                  value={currentSolution}
+                  onChange={(e) => setCurrentSolution(e.target.value)}
+                />
               </div>
-              {details.length < 5 && (
-                <button
-                  onClick={addDetail}
-                  className="mt-2 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <Plus className="size-3.5" />
-                  追加する
-                </button>
+              <div>
+                <label className="block text-xs font-medium mb-1.5 text-muted-foreground">👥 自分以外にも同じ気持ちの人は？</label>
+                <Input
+                  placeholder="例：毎日電車で通勤している人たち"
+                  value={targetUser}
+                  onChange={(e) => setTargetUser(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium mb-1.5 text-muted-foreground">💬 その他・追加で伝えたいこと</label>
+                <div className="space-y-2">
+                  {details.map((d, i) => (
+                    <div key={i} className="flex gap-2 items-center">
+                      <Input
+                        placeholder="自由に書いてください"
+                        value={d}
+                        onChange={(e) => updateDetail(i, e.target.value)}
+                      />
+                      {details.length > 1 && (
+                        <button
+                          onClick={() => removeDetail(i)}
+                          className="text-muted-foreground hover:text-destructive transition-colors"
+                        >
+                          <X className="size-4" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                {details.length < 5 && (
+                  <button
+                    onClick={addDetail}
+                    className="mt-2 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <Plus className="size-3.5" />
+                    追加する
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Tags */}
+            <div>
+              <label className="block text-sm font-medium mb-1.5 text-muted-foreground">タグ</label>
+
+              {/* 選択済みタグ */}
+              {tags.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mb-2">
+                  {tags.map((tag) => (
+                    <button
+                      key={tag}
+                      onClick={() => removeTag(tag)}
+                      className="inline-flex items-center gap-1 text-xs bg-primary/10 text-primary border border-primary/20 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20 rounded-full px-2.5 py-1 transition-colors"
+                    >
+                      {tag}
+                      <X className="size-3" />
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* 入力欄 + サジェスト */}
+              <div className="relative">
+                <Input
+                  placeholder="タグを検索・入力"
+                  value={tagInput}
+                  onChange={(e) => setTagInput(e.target.value)}
+                />
+                {tagInput.trim() && (() => {
+                  const q = tagInput.trim().toLowerCase().replace(/^#/, '')
+                  const customTag = tagInput.trim().startsWith('#') ? tagInput.trim() : `#${tagInput.trim()}`
+                  const matched = suggestedTags.filter(
+                    (s) => !tags.includes(s.tag) && s.tag.replace('#', '').includes(q)
+                  )
+                  const showCustom = !tags.includes(customTag) && !matched.some((s) => s.tag === customTag)
+                  return (
+                    <div className="absolute z-10 top-full left-0 right-0 mt-1 bg-card border border-border rounded-lg shadow-md overflow-hidden">
+                      {matched.map((s) => (
+                        <button
+                          key={s.tag}
+                          onMouseDown={(e) => { e.preventDefault(); addTag(s.tag) }}
+                          className="w-full flex items-center gap-2 px-3 py-2.5 text-sm hover:bg-muted transition-colors"
+                        >
+                          <span>{s.tag}</span>
+                          <span className="text-xs text-muted-foreground">{s.count}件</span>
+                        </button>
+                      ))}
+                      {showCustom && (
+                        <button
+                          onMouseDown={(e) => { e.preventDefault(); addTag(tagInput) }}
+                          className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-primary hover:bg-primary/5 transition-colors border-t border-border"
+                        >
+                          <Plus className="size-3.5 shrink-0" />
+                          <span>「{customTag}」を追加</span>
+                        </button>
+                      )}
+                    </div>
+                  )
+                })()}
+              </div>
+
+              {/* おすすめタグ（未入力時のみ） */}
+              {!tagInput.trim() && (
+                <div className="flex gap-x-4 gap-y-0 mt-2">
+                  <span className="text-xs text-primary/70 font-medium shrink-0 mt-0.5">おすすめタグ</span>
+                  <div className="flex flex-wrap gap-x-2 gap-y-1">
+                    {suggestedTags
+                      .filter((s) => !tags.includes(s.tag))
+                      .map((s) => (
+                        <button
+                          key={s.tag}
+                          onClick={() => setTags((prev) => [...prev, s.tag])}
+                          className="text-xs text-primary hover:text-primary/70 transition-colors"
+                        >
+                          {s.tag}
+                        </button>
+                      ))}
+                  </div>
+                </div>
               )}
             </div>
-          </div>
 
-          {/* Tags */}
-          <div>
-            <label className="block text-sm font-medium mb-1.5">タグ</label>
-            <div className="flex flex-wrap gap-1.5 mb-2">
-              {tags.map((tag) => (
+            {/* 公開設定 */}
+            <div>
+              <label className="block text-sm font-medium mb-2 text-muted-foreground">公開設定</label>
+              <div className="flex gap-2">
                 <button
-                  key={tag}
-                  onClick={() => removeTag(tag)}
-                  className="inline-flex items-center gap-1 text-xs bg-muted text-muted-foreground hover:bg-destructive/20 hover:text-destructive rounded-full px-2.5 py-1 transition-colors"
+                  type="button"
+                  onClick={() => setIsPublic(true)}
+                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border text-sm font-medium transition-all ${
+                    isPublic
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : 'border-border text-muted-foreground hover:border-primary/40'
+                  }`}
                 >
-                  {tag}
-                  <X className="size-3" />
+                  <Globe className="size-4" />
+                  公開
                 </button>
-              ))}
+                <button
+                  type="button"
+                  onClick={() => setIsPublic(false)}
+                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border text-sm font-medium transition-all ${
+                    !isPublic
+                      ? 'border-slate-400 bg-slate-50 text-slate-600'
+                      : 'border-border text-muted-foreground hover:border-slate-300'
+                  }`}
+                >
+                  <Lock className="size-4" />
+                  非公開（自分だけ）
+                </button>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1.5">
+                {isPublic
+                  ? 'Timelineに表示され、みんなが共感できます。'
+                  : 'プロフィールにのみ保存されます。あとから公開に変更できます。'}
+              </p>
             </div>
-            <Input
-              placeholder="タグ入力後 Enter（例：仕事）"
-              value={tagInput}
-              onChange={(e) => setTagInput(e.target.value)}
-              onKeyDown={handleTagKeyDown}
-            />
-          </div>
-
-          {/* 公開設定 */}
-          <div>
-            <label className="block text-sm font-medium mb-2">公開設定</label>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setIsPublic(true)}
-                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border text-sm font-medium transition-all ${
-                  isPublic
-                    ? 'border-primary bg-primary/10 text-primary'
-                    : 'border-border text-muted-foreground hover:border-primary/40'
-                }`}
-              >
-                <Globe className="size-4" />
-                公開
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsPublic(false)}
-                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border text-sm font-medium transition-all ${
-                  !isPublic
-                    ? 'border-slate-400 bg-slate-50 text-slate-600'
-                    : 'border-border text-muted-foreground hover:border-slate-300'
-                }`}
-              >
-                <Lock className="size-4" />
-                非公開（自分だけ）
-              </button>
-            </div>
-            <p className="text-xs text-muted-foreground mt-1.5">
-              {isPublic
-                ? 'Timelineに表示され、みんなが共感できます。'
-                : 'プロフィールにのみ保存されます。あとから公開に変更できます。'}
-            </p>
           </div>
 
           {/* Submit */}
-          <div className="pt-2">
+          <div className="pt-8">
             <Button
               className="w-full h-11 text-base"
               disabled={!isValid || submitted}
